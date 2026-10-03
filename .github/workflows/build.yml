@@ -33,6 +33,19 @@ jobs:
           mkdir -p android/app
           echo '${{ secrets.GOOGLE_SERVICES_JSON }}' > android/app/google-services.json
 
+      - name: Add Google Services Plugin
+        run: |
+          # Add classpath to project-level build.gradle
+          sed -i 's|dependencies {|dependencies {\n        classpath "com.google.gms:google-services:4.4.0"|' android/build.gradle
+          
+          # Add apply plugin to app-level build.gradle
+          sed -i 's|apply plugin: "com.android.application"|apply plugin: "com.android.application"\napply plugin: "com.google.gms.google-services"|' android/app/build.gradle
+          
+          echo "=== android/build.gradle ==="
+          cat android/build.gradle
+          echo "=== android/app/build.gradle (first 30 lines) ==="
+          head -30 android/app/build.gradle
+
       - name: Install dependencies
         run: flutter pub get
 
